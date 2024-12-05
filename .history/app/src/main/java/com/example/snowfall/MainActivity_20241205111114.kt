@@ -44,7 +44,6 @@ class MainActivity : ComponentActivity() {
 fun SnowfallScreen() {
     var score by remember { mutableStateOf(0) }
     var isAnimating by remember { mutableStateOf(false) }
-    var isExploding by remember { mutableStateOf(false) }
     var animationDuration by remember { mutableStateOf(1500) }
     var maxHeight by remember { mutableStateOf(0f) }
     
@@ -54,10 +53,7 @@ fun SnowfallScreen() {
             durationMillis = animationDuration,
             easing = LinearEasing
         ),
-        finishedListener = { 
-            isAnimating = false
-            isExploding = false
-        }
+        finishedListener = { isAnimating = false }
     )
 
     val offsetY = if (isAnimating) {
@@ -83,6 +79,7 @@ fun SnowfallScreen() {
             .fillMaxSize()
             .background(Color.Black)
     ) {
+        // Score display
         Text(
             text = "Score: $score",
             color = Color.White,
@@ -97,6 +94,7 @@ fun SnowfallScreen() {
             modifier = Modifier.fillMaxSize()
         )
         
+        // Stationary snowman
         Image(
             painter = painterResource(id = R.drawable.pngegg),
             contentDescription = "Snowman",
@@ -106,11 +104,10 @@ fun SnowfallScreen() {
                 .size(150.dp)
         )
         
+        // Clickable reindeer
         Image(
-            painter = painterResource(
-                id = if (isExploding) R.drawable.explosion else R.drawable.reindeer
-            ),
-            contentDescription = if (isExploding) "Explosion" else "Flying reindeer",
+            painter = painterResource(id = R.drawable.reindeer),
+            contentDescription = "Flying reindeer",
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 50.dp, bottom = 120.dp)
@@ -118,7 +115,7 @@ fun SnowfallScreen() {
                 .graphicsLayer {
                     translationY = offsetY
                     translationX = offsetX
-                    rotationZ = if (isAnimating && !isExploding) {
+                    rotationZ = if (isAnimating) {
                         progress * 720f
                     } else 0f
                 }
@@ -126,9 +123,8 @@ fun SnowfallScreen() {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
                 ) {
-                    if (isAnimating && !isExploding) {
+                    if (isAnimating) {
                         score++
-                        isExploding = true
                     }
                 }
         )
