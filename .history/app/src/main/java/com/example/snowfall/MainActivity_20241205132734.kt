@@ -19,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -228,9 +227,6 @@ fun SnowfallScreen(
                 throwCount % 3 == 0 -> "Televerket"
                 else -> "Flying reindeer"
             },
-            colorFilter = if (throwCount % 3 == 0) {
-                ColorFilter.tint(Color(0xFFFF5722)) // Material Orange color
-            } else null,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 50.dp, bottom = 120.dp)

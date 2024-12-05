@@ -19,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -95,7 +94,6 @@ fun SnowfallScreen(
     onScore: () -> Unit = {}
 ) {
     var score by remember { mutableStateOf(0) }
-    var throwCount by remember { mutableStateOf(0) }
     var isAnimating by remember { mutableStateOf(false) }
     var isExploding by remember { mutableStateOf(false) }
     var showQuintus by remember { mutableStateOf(false) }
@@ -154,7 +152,6 @@ fun SnowfallScreen(
             maxHeight = Random.nextFloat() * 1500f + 200f
             animationDuration = Random.nextInt(1200, 2000)
             isAnimating = true
-            throwCount++
         }
     }
 
@@ -217,20 +214,9 @@ fun SnowfallScreen(
 
         Image(
             painter = painterResource(
-                id = when {
-                    isExploding -> R.drawable.explosion
-                    throwCount % 3 == 0 -> R.drawable.televerket
-                    else -> R.drawable.reindeer
-                }
+                id = if (isExploding) R.drawable.explosion else R.drawable.reindeer
             ),
-            contentDescription = when {
-                isExploding -> "Explosion"
-                throwCount % 3 == 0 -> "Televerket"
-                else -> "Flying reindeer"
-            },
-            colorFilter = if (throwCount % 3 == 0) {
-                ColorFilter.tint(Color(0xFFFF5722)) // Material Orange color
-            } else null,
+            contentDescription = if (isExploding) "Explosion" else "Flying reindeer",
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 50.dp, bottom = 120.dp)
