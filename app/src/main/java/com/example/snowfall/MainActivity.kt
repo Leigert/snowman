@@ -1,6 +1,7 @@
 package com.example.snowfall
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,25 +25,72 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.snowfall.music.MusicPlayer
+import com.example.snowfall.sound.SoundEffect
 import com.example.snowfall.snowfall.Snowfall
 import com.example.snowfall.ui.theme.SnowfallTheme
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
+    private var musicPlayer: MusicPlayer? = null
+    private var soundEffect: SoundEffect? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try {
+            musicPlayer = MusicPlayer(this)
+            soundEffect = SoundEffect(this)
+            musicPlayer?.start()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error initializing audio", e)
+        }
+        
         enableEdgeToEdge()
         setContent {
             SnowfallTheme {
-                SnowfallScreen()
+                SnowfallScreen(
+                    onScore = { soundEffect?.playExplosion() }
+                )
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            musicPlayer?.start()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error resuming music", e)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            musicPlayer?.stop()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error pausing music", e)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            musicPlayer?.release()
+            musicPlayer = null
+            soundEffect?.release()
+            soundEffect = null
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error destroying audio players", e)
         }
     }
 }
 
 @Composable
-fun SnowfallScreen() {
+fun SnowfallScreen(
+    onScore: () -> Unit = {}
+) {
     var score by remember { mutableStateOf(0) }
     var isAnimating by remember { mutableStateOf(false) }
     var isExploding by remember { mutableStateOf(false) }
@@ -138,6 +186,7 @@ fun SnowfallScreen() {
                     if (isAnimating && !isExploding) {
                         score++
                         isExploding = true
+                        onScore()
                     }
                 }
         )
