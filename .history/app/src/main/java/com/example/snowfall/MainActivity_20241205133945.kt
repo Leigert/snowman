@@ -176,7 +176,7 @@ fun SnowfallScreen(
     // Timer for iPhone appearance
     LaunchedEffect(Unit) {
         while (true) {
-            delay(10000) // Wait 10 seconds instead of 15000
+            delay(120000) // Wait 2 minutes
             showIPhone = true
             iPhonePosition = -1500f  // Scroll distance
         }

@@ -110,8 +110,6 @@ fun SnowfallScreen(
     var showQuintusExplosion by remember { mutableStateOf(false) }
     var animationDuration by remember { mutableStateOf(1500) }
     var maxHeight by remember { mutableStateOf(0f) }
-    var showIPhone by remember { mutableStateOf(false) }
-    var iPhonePosition by remember { mutableStateOf(0f) }
     
     val quintusScale by animateFloatAsState(
         targetValue = if (showQuintus) 1f else 0f,
@@ -157,30 +155,6 @@ fun SnowfallScreen(
     val offsetX = if (isAnimating) {
         -progress * 500f
     } else 0f
-
-    // Animate iPhone scrolling
-    val iPhoneOffset by animateFloatAsState(
-        targetValue = iPhonePosition,
-        animationSpec = tween(
-            durationMillis = 5000,  // 5 seconds to scroll across screen
-            easing = LinearEasing
-        ),
-        finishedListener = {
-            if (showIPhone && it <= -1500f) {  // When scrolled off screen
-                showIPhone = false
-                iPhonePosition = 0f  // Reset position
-            }
-        }
-    )
-
-    // Timer for iPhone appearance
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(10000) // Wait 10 seconds instead of 15000
-            showIPhone = true
-            iPhonePosition = -1500f  // Scroll distance
-        }
-    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -291,19 +265,5 @@ fun SnowfallScreen(
                     }
                 }
         )
-
-        // Scrolling iPhone
-        if (showIPhone) {
-            Image(
-                painter = painterResource(id = R.drawable.iphone),
-                contentDescription = "Scrolling iPhone",
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(200.dp)
-                    .graphicsLayer {
-                        translationX = iPhoneOffset
-                    }
-            )
-        }
     }
 }
